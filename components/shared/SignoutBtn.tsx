@@ -12,7 +12,7 @@ const SignoutBtn = ({ isSidebar = false }: SignoutBtnProps) => {
   const router = useRouter();
   return (
     <SignedIn>
-      <SignOutButton signOutCallback={() => router.push("/")}>
+      <SignOutButton signOutCallback={() => router.push("/sign-in")}>
         <div className={`${isSidebar && "gap-4 p-4"} flex cursor-pointer`}>
           <Image
             src={"/assets/logout.svg"}
