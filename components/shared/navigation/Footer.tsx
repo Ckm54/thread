@@ -1,7 +1,13 @@
-import React from "react";
+import NavLinks from "@/components/shared/navigation/NavLinks";
 
 const Footer = () => {
-  return <div>Footer</div>;
+  return (
+    <section className="bottombar">
+      <div className="bottombar_container">
+        <NavLinks />
+      </div>
+    </section>
+  );
 };
 
 export default Footer;

@@ -1,37 +1,12 @@
-"use client";
-import { sidebarLinks } from "@/constants";
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
-import { usePathname } from "next/navigation";
 import SignoutBtn from "@/components/shared/SignoutBtn";
+import NavLinks from "@/components/shared/navigation/NavLinks";
 
 const LeftSidebar = () => {
-  const pathname = usePathname();
   return (
     <section className="custom-scrollbar leftsidebar">
       <div className="flex w-full flex-1 flex-col gap-6 px-6">
-        {sidebarLinks.map((link) => {
-          const isActive =
-            (pathname.includes(link.route) && link.route.length > 1) ||
-            pathname === link.route;
-
-          return (
-            <Link
-              href={link.route}
-              key={link.route}
-              className={`leftsidebar_link ${isActive && "bg-primary-500"}`}
-            >
-              <Image
-                src={link.imgURL}
-                alt={link.label}
-                width={24}
-                height={24}
-              />
-              <p className="text-light-1 max-lg:hidden">{link.label}</p>
-            </Link>
-          );
-        })}
+        <NavLinks />
       </div>
 
       <div className="mt-10 px-6">
