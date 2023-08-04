@@ -5,7 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const NavLinks = () => {
+interface NavLinksProps {
+  isFooter?: boolean;
+}
+
+const NavLinks = ({ isFooter = false }: NavLinksProps) => {
   const pathname = usePathname();
   return (
     <>
@@ -18,10 +22,18 @@ const NavLinks = () => {
           <Link
             href={link.route}
             key={link.route}
-            className={`leftsidebar_link ${isActive && "bg-primary-500"}`}
+            className={`${isFooter ? "bottombar_link" : "leftsidebar_link"} ${
+              isActive && "bg-primary-500"
+            }`}
           >
             <Image src={link.imgURL} alt={link.label} width={24} height={24} />
             <p className="text-light-1 max-lg:hidden">{link.label}</p>
+            {isFooter && (
+              <p className="text-subtle-medium text-light-1 max-sm:hidden">
+                {/* get only first word of a link to display on tablet devices */}
+                {link.label.split(/\s+/)[0]}
+              </p>
+            )}
           </Link>
         );
       })}

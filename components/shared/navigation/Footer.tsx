@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <section className="bottombar">
       <div className="bottombar_container">
-        <NavLinks />
+        <NavLinks isFooter />
       </div>
     </section>
   );
