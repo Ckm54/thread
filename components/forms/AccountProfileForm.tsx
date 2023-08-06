@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { isBase64Image } from "@/lib/utils";
 
 interface AccountProfileFormProps {
   user: UserInfoType;
@@ -27,6 +28,8 @@ interface AccountProfileFormProps {
 }
 
 const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
+  const [files, setFiles] = React.useState<File[]>([]);
+
   const form = useForm<z.infer<typeof userFormSchema>>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -38,15 +41,33 @@ const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
   });
 
   const handleImageChange = (
-    e: ChangeEvent,
+    e: ChangeEvent<HTMLInputElement>,
     fieldChange: (val: string) => void
   ) => {
     e.preventDefault();
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setFiles(Array.from(e.target.files));
+
+      if (!file.type.includes("image")) return;
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+
+        fieldChange(imageDataUrl);
+      };
+
+      fileReader.readAsDataURL(file);
+    }
   };
 
   function onSubmit(values: z.infer<typeof userFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    // upload image and update user in the database
+    const profile_image_blob = values.profile_photo;
+
+    const hasImageChanged = isBase64Image(profile_image_blob);
     console.log(values);
   }
 
@@ -64,14 +85,15 @@ const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
             <FormItem className="flex items-center gap-4">
               <FormLabel className="account-form_image-label">
                 {field.value ? (
-                  <Image
-                    src={field.value}
-                    alt="profile_photo"
-                    width={96}
-                    height={96}
-                    priority
-                    className="rounded-full object-contain"
-                  />
+                  <div className="w-[6rem] h-[6rem] relative">
+                    <Image
+                      src={field.value}
+                      alt="profile_photo"
+                      fill
+                      priority
+                      className="rounded-full object-cover overflow-hidden"
+                    />
+                  </div>
                 ) : (
                   <Image
                     src={"/assets/profile.svg"}
@@ -157,14 +179,14 @@ const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
                   className="account-form_input no-focus"
                 />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>Some brief info about you.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">{btnText}</Button>
+        <Button type="submit" className="bg-primary-500">
+          {btnText}
+        </Button>
       </form>
     </Form>
   );
