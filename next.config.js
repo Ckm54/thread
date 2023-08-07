@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // experimental: {
-  //   serverActions: true,
-  //   serverComponentsExternalPackages: ["mongoose"]
-  // },
+  experimental: {
+    serverActions: true,
+    serverComponentsExternalPackages: ["mongoose"],
+    serverActionsBodySizeLimit: "4mb",
+  },
   images: {
     remotePatterns: [
       {
