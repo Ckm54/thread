@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 
+// update user info in  the database
 export async function updateUser({
   userId,
   username,
@@ -43,5 +44,20 @@ export async function updateUser({
     }
   } catch (error: any) {
     throw new Error(`Failed to create/update user: ${error.message}`);
+  }
+}
+
+// fetch user info from the database
+export async function fetchUser({ userId }: { userId: string }) {
+  try {
+    connectToDB();
+
+    return await User.findOne({ id: userId });
+    // .populate({
+    //   path: 'communities',
+    //   model: Community
+    // })
+  } catch (error: any) {
+    throw new Error(`Fetch user error: Failed to fetch user ${error.message}`);
   }
 }
