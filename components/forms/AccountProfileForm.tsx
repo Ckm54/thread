@@ -21,6 +21,9 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
+import { updateUser } from "@/lib/actions/user.action";
+import { usePathname, useRouter } from "next/navigation";
 
 interface AccountProfileFormProps {
   user: UserInfoType;
@@ -29,6 +32,9 @@ interface AccountProfileFormProps {
 
 const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
   const [files, setFiles] = React.useState<File[]>([]);
+  const { startUpload } = useUploadThing("media");
+  const pathname = usePathname();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof userFormSchema>>({
     resolver: zodResolver(userFormSchema),
@@ -63,12 +69,36 @@ const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
     }
   };
 
-  function onSubmit(values: z.infer<typeof userFormSchema>) {
+  async function onSubmit(values: z.infer<typeof userFormSchema>) {
     // upload image and update user in the database
     const profile_image_blob = values.profile_photo;
 
     const hasImageChanged = isBase64Image(profile_image_blob);
-    console.log(values);
+
+    if (hasImageChanged) {
+      // upload image using uploadthing
+      const imageResponse = await startUpload(files);
+
+      if (imageResponse && imageResponse[0].fileUrl) {
+        values.profile_photo = imageResponse[0].fileUrl;
+      }
+    }
+
+    ///// TODO: Update user profile in database
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
+      image: values.profile_photo,
+      path: pathname,
+    });
+
+    if (pathname === "/profile/edit") {
+      router.back();
+    } else {
+      router.push("/");
+    }
   }
 
   return (

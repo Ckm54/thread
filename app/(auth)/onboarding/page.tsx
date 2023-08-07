@@ -2,7 +2,6 @@ import React from "react";
 import { currentUser } from "@clerk/nextjs";
 
 import AccountProfileForm from "@/components/forms/AccountProfileForm";
-import { userInfo } from "os";
 
 const page = async () => {
   const user = await currentUser();
