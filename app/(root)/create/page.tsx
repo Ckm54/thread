@@ -1,7 +1,8 @@
 import React from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { fetchUser } from "@/lib/actions/user.action";
+import { fetchUser } from "@/lib/actions/user.actions";
+import CreatePostForm from "@/components/forms/CreatePostForm";
 
 const CreatePostPage = async () => {
   const user = await currentUser();
@@ -17,7 +18,7 @@ const CreatePostPage = async () => {
     <div>
       <h1 className="head-text">Create new post</h1>
 
-      {/* <CreatePostForm userId={userInfo._id} /> */}
+      <CreatePostForm userId={userInfo._id.toString()} />
     </div>
   );
 };
