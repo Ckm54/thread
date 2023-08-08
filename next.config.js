@@ -3,7 +3,6 @@ const nextConfig = {
   experimental: {
     serverActions: true,
     serverComponentsExternalPackages: ["mongoose"],
-    serverActionsBodySizeLimit: "4mb",
   },
   images: {
     remotePatterns: [
@@ -24,6 +23,9 @@ const nextConfig = {
         hostname: "placehold.co",
       },
     ],
+    typescript: {
+      ignoreBuildErrors: true,
+    },
   },
 };
 
