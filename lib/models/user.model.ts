@@ -1,6 +1,29 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-const userSchema = new mongoose.Schema({
+interface IUser extends Document {
+  id: string;
+  username: string;
+  name: string;
+  image?: string;
+  bio?: string;
+  onboarded: boolean;
+  communities: ICommunity[];
+  threads: IThread[];
+}
+
+interface ICommunity extends Document {
+  id: string;
+  name: string;
+  members: IUser["_id"][];
+}
+
+interface IThread extends Document {
+  id: string;
+  name: string;
+  members: IUser["_id"][];
+}
+
+const userSchema: Schema<IUser> = new mongoose.Schema({
   id: { type: String, required: true },
   username: { type: String, required: true, unique: true },
   name: { type: String, required: true },
@@ -21,6 +44,7 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 
 export default User;
