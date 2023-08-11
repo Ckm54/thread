@@ -6,6 +6,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { userFormSchema } from "@/lib/validations/userForm";
+import { Loader } from "lucide-react";
 
 import {
   Form,
@@ -32,6 +33,8 @@ interface AccountProfileFormProps {
 
 const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
   const [files, setFiles] = React.useState<File[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
   const { startUpload } = useUploadThing("media");
   const pathname = usePathname();
   const router = useRouter();
@@ -70,39 +73,51 @@ const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
   };
 
   async function onSubmit(values: z.infer<typeof userFormSchema>) {
-    // upload image and update user in the database
-    const profile_image_blob = values.profile_photo;
+    setIsLoading(true);
+    try {
+      // upload image and update user in the database
+      setError(false);
+      const profile_image_blob = values.profile_photo;
 
-    const hasImageChanged = isBase64Image(profile_image_blob);
+      const hasImageChanged = isBase64Image(profile_image_blob);
 
-    if (hasImageChanged) {
-      // upload image using uploadthing
-      const imageResponse = await startUpload(files);
+      if (hasImageChanged) {
+        // upload image using uploadthing
+        const imageResponse = await startUpload(files);
 
-      if (imageResponse && imageResponse[0].fileUrl) {
-        values.profile_photo = imageResponse[0].fileUrl;
+        if (imageResponse && imageResponse[0].fileUrl) {
+          values.profile_photo = imageResponse[0].fileUrl;
+        }
       }
-    }
 
-    ///// TODO: Update user profile in database
-    await updateUser({
-      userId: user.id,
-      username: values.username,
-      name: values.name,
-      bio: values.bio,
-      image: values.profile_photo,
-      path: pathname,
-    });
+      ///// TODO: Update user profile in database
+      await updateUser({
+        userId: user.id,
+        username: values.username,
+        name: values.name,
+        bio: values.bio,
+        image: values.profile_photo,
+        path: pathname,
+      });
 
-    if (pathname === "/profile/edit") {
-      router.back();
-    } else {
-      router.push("/");
+      if (pathname === "/profile/edit") {
+        router.back();
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      console.log("ONBOARDING ERROR", error);
+      setError(true);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <Form {...form}>
+      {error && (
+        <p className="text-red-500 text-center py-2">Something went wrong!</p>
+      )}
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col justify-start gap-6"
@@ -214,8 +229,9 @@ const AccountProfileForm = ({ user, btnText }: AccountProfileFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-primary-500">
-          {btnText}
+        <Button type="submit" className="bg-primary-500" disabled={isLoading}>
+          {btnText}{" "}
+          {isLoading && <Loader className="w-4 h-4 animate-spin ml-2" />}
         </Button>
       </form>
     </Form>

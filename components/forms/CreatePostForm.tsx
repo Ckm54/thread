@@ -1,11 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import React, { ChangeEvent } from "react";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { userThreadFormSchema } from "@/lib/validations/userThreadForm";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,8 +9,14 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { createThread } from "@/lib/actions/thread.actions";
+import { userThreadFormSchema } from "@/lib/validations/userThreadForm";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 interface CreatePostFormProps {
   userId: string;
@@ -24,6 +25,8 @@ interface CreatePostFormProps {
 const CreatePostForm = ({ userId }: CreatePostFormProps) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
 
   const form = useForm<z.infer<typeof userThreadFormSchema>>({
     resolver: zodResolver(userThreadFormSchema),
@@ -36,19 +39,31 @@ const CreatePostForm = ({ userId }: CreatePostFormProps) => {
   const handleCreatePost = async (
     values: z.infer<typeof userThreadFormSchema>
   ) => {
-    console.log({ userId });
-    await createThread({
-      text: values.thread,
-      author: userId,
-      communityId: null,
-      path: pathname,
-    });
+    try {
+      setIsLoading(true);
+      await createThread({
+        text: values.thread,
+        author: userId,
+        communityId: null,
+        path: pathname,
+      });
 
-    router.push("/");
+      router.push("/");
+    } catch (error) {
+      console.log("CREATE_POST_ERROR", error);
+      setError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Form {...form}>
+      {error && (
+        <p className="text-red-500 py-2">
+          Something went wrong. Please try again.
+        </p>
+      )}
       <form
         onSubmit={form.handleSubmit(handleCreatePost)}
         className="mt-10 flex flex-col justify-start gap-10"
@@ -68,8 +83,12 @@ const CreatePostForm = ({ userId }: CreatePostFormProps) => {
           )}
         />
 
-        <Button type="submit" className="bg-primary-500">
-          Post
+        <Button
+          type="submit"
+          className="flex items-center"
+          disabled={isLoading}
+        >
+          Post {isLoading && <Loader className="w-4 h-4 animate-spin ml-2" />}
         </Button>
       </form>
     </Form>
