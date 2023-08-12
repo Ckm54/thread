@@ -18,6 +18,12 @@ interface ICommunity extends Document {
 }
 
 interface IThread extends Document {
+  text: string;
+  parentId: string | null;
+  createdAt: string;
+  children: { author: { image: string } }[];
+  author: { name: string; image: string; id: string };
+  community: { id: string; name: string; image: string } | null;
   id: string;
   name: string;
   members: IUser["_id"][];
