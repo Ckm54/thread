@@ -39,7 +39,11 @@ const ThreadCard = ({
   author,
 }: ThreadCardProps) => {
   return (
-    <article className="flex w-full flex-col rounded-xl bg-dark-2 p-6">
+    <article
+      className={`flex w-full flex-col rounded-xl ${
+        isComment ? "px-0 xs:px-7 pt-4" : "bg-dark-2 p-6"
+      }`}
+    >
       <div className="flex items-start justify-between">
         <div className="flex w-full flex-1 flex-row gap-4">
           <div className="flex flex-col items-center">
@@ -48,7 +52,7 @@ const ThreadCard = ({
                 src={author.image}
                 alt={`${author.image} profile image`}
                 fill
-                className="cursor-pointer rounded-full"
+                className="cursor-pointer rounded-full object-cover"
               />
             </Link>
             <div className="thread-card_bar" />
@@ -95,9 +99,10 @@ const ThreadCard = ({
                 />
               </div>
 
+              {/* update to have reply count on each post including none comment ones */}
               {isComment && comments.length > 0 && (
                 <Link href={`/thread/${id}`}>
-                  <p className="mt-1 text-subtle-medium text-gray-1">
+                  <p className="mb-2 text-subtle-medium text-gray-1">
                     {comments.length} repl{comments.length > 1 ? "ies" : "y"}
                   </p>
                 </Link>

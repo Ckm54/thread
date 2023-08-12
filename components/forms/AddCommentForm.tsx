@@ -67,13 +67,14 @@ const AddCommentForm = ({
 
   return (
     <div className="comment-form w-full">
-      <Image
-        src={currentUserImg}
-        alt="profile_image"
-        width={48}
-        height={48}
-        className="rounded-full object-cover"
-      />
+      <div className="h-12 w-12 relative">
+        <Image
+          src={currentUserImg}
+          alt="profile_image"
+          fill
+          className="rounded-full object-cover"
+        />
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleAddCommentToThread)}
