@@ -18,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import { addCommentToThread } from "@/lib/actions/thread.actions";
 
 interface AddCommentFormProps {
   threadId: string;
@@ -42,9 +43,27 @@ const AddCommentForm = ({
     },
   });
 
-  const handleCreatePost = async (
+  const handleAddCommentToThread = async (
     values: z.infer<typeof commentValidationSchema>
-  ) => {};
+  ) => {
+    try {
+      setIsLoading(true);
+      await addCommentToThread({
+        threadId: threadId,
+        commentText: values.thread,
+        userId: JSON.parse(currentUserId),
+        path: pathname,
+      });
+
+      form.reset();
+    } catch (error: any) {
+      setError(true);
+      console.log("ADD COMMENT TO BLOG ERROR: ", error.message);
+      return;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="comment-form w-full">
@@ -57,7 +76,7 @@ const AddCommentForm = ({
       />
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(handleCreatePost)}
+          onSubmit={form.handleSubmit(handleAddCommentToThread)}
           className="flex w-full items-center"
         >
           <FormField
