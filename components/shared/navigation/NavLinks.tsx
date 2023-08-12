@@ -1,5 +1,6 @@
 "use client";
 import { sidebarLinks } from "@/constants";
+import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,11 +12,16 @@ interface NavLinksProps {
 
 const NavLinks = ({ isFooter = false }: NavLinksProps) => {
   const pathname = usePathname();
+  const { userId } = useAuth();
   return (
     <>
       {sidebarLinks.map((link) => {
+        if (link.route === "/profile") link.route = `/profile/${userId}`;
+
         const isActive =
-          (pathname.includes(link.route) && link.route.length > 1) ||
+          (!pathname.includes("profile") &&
+            pathname.includes(link.route) &&
+            link.route.length > 1) ||
           pathname === link.route;
 
         return (
