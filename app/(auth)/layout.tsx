@@ -18,7 +18,15 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} bg-dark-1`}>{children}</body>
+        <body
+          className={`${inter.className} bg-dark-1 bg-cover bg-center relative bg-fixed`}
+          style={{ backgroundImage: "url('/background/bg.jpg')" }}
+        >
+          <div className="absolute -z-50 top-0 right-0 bottom-0 left-0 w-full h-full bg-black/70" />
+          <div className="w-full min-h-screen flex justify-center items-center z-50">
+            {children}
+          </div>
+        </body>
       </html>
     </ClerkProvider>
   );
