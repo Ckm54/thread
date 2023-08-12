@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import React from "react";
 import ThreadCard from "../cards/ThreadCard";
 
+export const revalidate = 0;
+
 interface ThreadsTabProps {
   currentUserId: string;
   accountId: string;
