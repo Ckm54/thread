@@ -7,6 +7,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { createThread } from "@/lib/actions/thread.actions";
@@ -79,6 +80,7 @@ const CreatePostForm = ({ userId }: CreatePostFormProps) => {
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <Textarea rows={15} {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
