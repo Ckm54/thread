@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
+import Thread from "../models/thread.model";
 
 // update user info in  the database
 export async function updateUser({
@@ -59,5 +60,30 @@ export async function fetchUser({ userId }: { userId: string }) {
     // })
   } catch (error: any) {
     throw new Error(`Fetch user error: Failed to fetch user ${error.message}`);
+  }
+}
+
+export async function fetchUserThreads({ userId }: { userId: string }) {
+  try {
+    connectToDB();
+
+    // Find all threads authored by the given user id
+    const threads = await User.findOne({ id: userId }).populate({
+      path: "threads",
+      model: Thread,
+      populate: {
+        path: "children",
+        model: Thread,
+        populate: {
+          path: "author",
+          model: User,
+          select: " id name image",
+        },
+      },
+    });
+
+    return threads;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user threads ${error.message}`);
   }
 }
