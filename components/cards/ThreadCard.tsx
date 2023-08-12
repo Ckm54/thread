@@ -65,7 +65,7 @@ const ThreadCard = ({
             </Link>
             <p className="text-small-regular text-light-2">{content}</p>
 
-            <div className="mt-5 flex flex-col gap-3">
+            <div className={`${isComment && "mb-8"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
                 <Image
                   src={"/assets/heart-gray.svg"}
@@ -102,7 +102,7 @@ const ThreadCard = ({
               {/* update to have reply count on each post including none comment ones */}
               {isComment && comments.length > 0 && (
                 <Link href={`/thread/${id}`}>
-                  <p className="mb-2 text-subtle-medium text-gray-1">
+                  <p className="mt-1 text-subtle-medium text-gray-1">
                     {comments.length} repl{comments.length > 1 ? "ies" : "y"}
                   </p>
                 </Link>

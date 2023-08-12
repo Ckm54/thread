@@ -6,6 +6,8 @@ import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
 
+export const revalidate = 0;
+
 const ThreadDetailsPage = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
 
