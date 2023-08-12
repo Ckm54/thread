@@ -142,3 +142,31 @@ export async function fetchAllUsers({
     throw new Error(`Failed to fetch all users ${error.message}`);
   }
 }
+
+export async function getUserActivity({ userId }: { userId: string }) {
+  try {
+    connectToDB();
+
+    // Find all threads created by this user
+    const userThreads = await Thread.find({ author: userId });
+
+    // collect all child thread ids i.e. replies from the children
+    const childThreadsIds = userThreads.reduce((acc, userThread) => {
+      return acc.concat(userThread.children);
+    }, []);
+
+    // get all replies except those created by this user
+    const replies = await Thread.find({
+      _id: { $in: childThreadsIds },
+      author: { $ne: userId },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "name image _id",
+    });
+
+    return replies;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user activity ${error.message}`);
+  }
+}
