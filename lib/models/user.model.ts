@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 interface IUser extends Document {
   id: string;
@@ -7,7 +7,7 @@ interface IUser extends Document {
   image?: string;
   bio?: string;
   onboarded: boolean;
-  communities: ICommunity[];
+  communities: Types.DocumentArray<ICommunity>;
   threads: IThread[];
 }
 
