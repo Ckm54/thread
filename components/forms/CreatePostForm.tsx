@@ -12,6 +12,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { createThread } from "@/lib/actions/thread.actions";
 import { userThreadFormSchema } from "@/lib/validations/userThreadForm";
+import { useOrganization } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -26,6 +27,7 @@ interface CreatePostFormProps {
 const CreatePostForm = ({ userId }: CreatePostFormProps) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { organization } = useOrganization();
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
 
@@ -45,7 +47,7 @@ const CreatePostForm = ({ userId }: CreatePostFormProps) => {
       await createThread({
         text: values.thread,
         author: userId,
-        communityId: null,
+        communityId: organization ? organization.id : null,
         path: pathname,
       });
 
